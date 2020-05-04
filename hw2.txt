@@ -1,0 +1,14 @@
+def f5(OTHERchoice, MYchoice, OTHERpayoff, MYpayoff, t):
+    if t == 0:
+        choice = 'C'
+    elif t == 199:
+        choice = 'D'
+    else:
+        chanceToCoop = random.random()
+
+        if chanceToCoop >= 0.1:
+            choice = OTHERchoice[t - 1]
+        else:
+            choice = 'C'
+
+    return choice

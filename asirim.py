@@ -56,6 +56,8 @@ def f4(OTHERchoice, MYchoice, OTHERpayoff, MYpayoff, t):
         if DOTHERpercentage > 0.9:
             choice = 'D'
 
+        # to do the last thing the other did
+
         elif OTHERchoice[t-1] == 'C' and MYchoice[t-1] == 'D':
             choice = 'D'
         elif OTHERchoice[t-1] == 'D' and MYchoice[t-1] == 'D':
@@ -65,71 +67,45 @@ def f4(OTHERchoice, MYchoice, OTHERpayoff, MYpayoff, t):
         elif OTHERchoice[t-1] == 'D' and MYchoice[t-1] == 'C':
             choice = 'D'
 
-        print('DMYpercentage: ', DMYpercentage)
-        print('DOTHERpercentage: ', DOTHERpercentage)
+    print("4 player choice: ", choice)
 
     return choice
 
 def f5(OTHERchoice, MYchoice, OTHERpayoff, MYpayoff, t):
-    choice = 'a'
     if t == 0:
+        choice = 'C'
+    elif t == 199:
         choice = 'D'
     else:
-        summaryOTHERPayoffs = sum(OTHERpayoff)
-        summaryMYPayoffs = sum(MYpayoff)
+        chanceToCoop = random.random()
 
-        DOTHERpercentage = DpercentNstepsBACK(OTHERchoice, 30, t)
-
-        tempMY = list(filter(lambda cho: cho == 'D', MYchoice))
-        DMYpercentage = len(tempMY) / len(MYchoice)
-
-        if DOTHERpercentage > 0.4 and t > 50:
-            choice = 'D'
-
-        if DOTHERpercentage > 0.9:
-            choice = 'D'
-
-        DOTHERpercentage = DpercentNstepsBACK(OTHERchoice, 5, t)
-        if DOTHERpercentage < 0.1 and t % 4 == 0:
-            choice = 'D'
-        elif DOTHERpercentage < 0.1:
+        if chanceToCoop >= 0.1:
+            choice = OTHERchoice[t - 1]
+        else:
             choice = 'C'
-
-
-        if OTHERchoice[t-1] == 'C' and MYchoice[t-1] == 'D':
-            choice = 'D'
-        elif OTHERchoice[t-1] == 'D' and MYchoice[t-1] == 'D':
-            choice = 'C'
-        elif OTHERchoice[t-1] == 'C' and MYchoice[t-1] == 'C':
-            choice = 'C'
-        elif OTHERchoice[t-1] == 'D' and MYchoice[t-1] == 'C':
-            choice = 'D'
-
-        print('DMYpercentage: ', DMYpercentage)
-        print('DOTHERpercentage: ', DOTHERpercentage)
 
     return choice
 
 Players = [Player(1, f1), Player(2, f2), Player(3, f3), Player(4, f4), Player(5, f5)]
 
 for step in range(200):
-    firstPCHOICE = Players[3].func(OTHERchoices, MYchoices, OTHERpayoffs, MYpayoffs, step)
-    MYchoices.append(firstPCHOICE)
+    firstPCHOICE = Players[3].func(MYchoices, OTHERchoices, OTHERpayoffs, MYpayoffs, step)
+    OTHERchoices.append(firstPCHOICE)
 
 
-    thirdPCHOICE = Players[4].func(OTHERchoices, MYchoices, OTHERpayoffs, MYpayoffs, step)
-    OTHERchoices.append(thirdPCHOICE)
+    myPCHOICE = Players[4].func(OTHERchoices, MYchoices, OTHERpayoffs, MYpayoffs, step)
+    MYchoices.append(myPCHOICE)
 
-    if firstPCHOICE == 'C' and thirdPCHOICE == 'C':
+    if firstPCHOICE == 'C' and myPCHOICE == 'C':
         MYpayoffs.append(3)
         OTHERpayoffs.append(3)
-    elif firstPCHOICE == 'C' and thirdPCHOICE == 'D':
-        MYpayoffs.append(0)
-        OTHERpayoffs.append(5)
-    elif firstPCHOICE == 'D' and thirdPCHOICE == 'C':
+    elif firstPCHOICE == 'C' and myPCHOICE == 'D':
         MYpayoffs.append(5)
         OTHERpayoffs.append(0)
-    elif firstPCHOICE == 'D' and thirdPCHOICE == 'D':
+    elif firstPCHOICE == 'D' and myPCHOICE == 'C':
+        MYpayoffs.append(0)
+        OTHERpayoffs.append(5)
+    elif firstPCHOICE == 'D' and myPCHOICE == 'D':
         MYpayoffs.append(1)
         OTHERpayoffs.append(1)
     summaryOTHERPayoffs = sum(OTHERpayoffs)
